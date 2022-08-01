@@ -340,7 +340,7 @@ function createBlocks(i, x) {
   block.style.left = `${i.xAxis}px`;
   block.style.bottom = `${i.yAxis}px`;
   block.setAttribute("id", `${i.xAxis}px-${i.yAxis}px`)
-
+  
   // block.bottomLeft = ["800px","100px"]
   box.appendChild(block);
 }
@@ -393,61 +393,65 @@ function moveBall() {
       // console.log(blocks);
       // console.log((blocks.splice(x,1)).xAxis);
       // blocks.filter(function(event,xr){
-      //   // console.log(xr,x);
-      //   if((event.xAxis === blocks.splice(x,1).xAxis) && ((event.yAxis === blocks.splice(x,1).yAxis))){
-      //     return event;
-      //   }
-      // });
-      // console.log(blocks);
-      // // console.log(blocks.splice(x,1));
-      // console.log(x);
-
-      // This method fails because after splice length of our array blocks also decreases and thus index number changes but here we gave the id to our div acc to older index and thus the confusion starts
+        //   // console.log(xr,x);
+        //   if((event.xAxis === blocks.splice(x,1).xAxis) && ((event.yAxis === blocks.splice(x,1).yAxis))){
+          //     return event;
+          //   }
+          // });
+          // console.log(blocks);
+          // // console.log(blocks.splice(x,1));
+          // console.log(x);
+          
+          // This method fails because after splice length of our array blocks also decreases and thus index number changes but here we gave the id to our div acc to older index and thus the confusion starts
+        }
+      });
+      if (counter === originalArrayLength) {
+        score.innerHTML = `Hurray ! You Won... <a target="_blank" class="highscore-btn" href="highscore.html"><span>High Scores</span></a>`;
+        
+        let highScores = localStorage.getItem("high") ? JSON.parse(localStorage.getItem("high")) : [];
+        // console.log(highScores);
+        highScores.push(counter);
+        // console.log(counter);
+        highScores.sort(function(a, b) {
+          return b - a
+        });
+        // console.log(highScores);
+        if (highScores.length > 5) {
+          highScores.pop();
+        }
+        localStorage.setItem("high", JSON.stringify(highScores));
+        clearInterval(ballMoving);
+        var audio = new Audio("2.mp3");
+        audio.play();
+        document.removeEventListener("keydown", moveUser);
+        document.querySelector(".fa-arrow-left").removeEventListener("mousedown",moveUser)
+        document.querySelector(".fa-arrow-right").removeEventListener("mousedown",moveUser)
+      }
     }
-  });
-  if (counter === originalArrayLength) {
-    score.innerHTML = `Hurray ! You Won... <a target="_blank" class="highscore-btn" href="highscore.html"><span>High Scores</span></a>`;
-
-    let highScores = localStorage.getItem("high") ? JSON.parse(localStorage.getItem("high")) : [];
-    // console.log(highScores);
-    highScores.push(counter);
-    // console.log(counter);
-    highScores.sort(function(a, b) {
-      return b - a
-    });
-    // console.log(highScores);
-    if (highScores.length > 5) {
-      highScores.pop();
-    }
-    localStorage.setItem("high", JSON.stringify(highScores));
-    clearInterval(ballMoving);
-    var audio = new Audio("2.mp3");
-    audio.play();
-    document.removeEventListener("keydown", moveUser);
-  }
-}
-
-function changeDirction() {
-  if (ballPositionY >= 500) {
-    addY = -2;
-  }
-  if (ballPositionX >= 970) {
-    addX = -2;
-  }
-  if (ballPositionX <= 0) {
-    addX = 2;
-  }
-  if ((ballPositionX > userPositionX && ballPositionX < userPositionX + 100) && (ballPositionY === userPositionY+20)) {
-    addY = 2;
-    var audio = new Audio("3.mp3");
-    audio.play();
-  }
-  if (ballPositionY <= 5) {
-    clearInterval(ballMoving);
-    document.removeEventListener("keydown", moveUser);
-    score.innerHTML = `You Lose ! <a target="_blank" class="highscore-btn" href="highscore.html"><span>High Scores</span></a>`;
-    let highScores = localStorage.getItem("high") ? JSON.parse(localStorage.getItem("high")) : [];
-    // console.log(highScores);
+    
+    function changeDirction() {
+      if (ballPositionY >= 500) {
+        addY = -2;
+      }
+      if (ballPositionX >= 970) {
+        addX = -2;
+      }
+      if (ballPositionX <= 0) {
+        addX = 2;
+      }
+      if ((ballPositionX > userPositionX && ballPositionX < userPositionX + 100) && (ballPositionY === userPositionY+20)) {
+        addY = 2;
+        var audio = new Audio("3.mp3");
+        audio.play();
+      }
+      if (ballPositionY <= 5) {
+        clearInterval(ballMoving);
+        document.removeEventListener("keydown", moveUser);
+        document.querySelector(".fa-arrow-left").removeEventListener("mousedown",moveUser)
+        document.querySelector(".fa-arrow-right").removeEventListener("mousedown",moveUser)
+        score.innerHTML = `You Lose ! <a target="_blank" class="highscore-btn" href="highscore.html"><span>High Scores</span></a>`;
+        let highScores = localStorage.getItem("high") ? JSON.parse(localStorage.getItem("high")) : [];
+        // console.log(highScores);
     highScores.push(counter);
     // console.log(counter);
     highScores.sort(function(a, b) {
@@ -464,6 +468,17 @@ function changeDirction() {
 }
 
 function moveUser(e) {
+  // console.log(e.target.classList[1]);
+  if(e.target.classList[1]==="fa-arrow-right"){
+    moveUserRight();
+    user.style.left = `${userPositionX}px`
+    user.style.bottom = `${userPositionY}px`
+  }
+  if(e.target.classList[1]==="fa-arrow-left"){
+    moveUserLeft();
+    user.style.left = `${userPositionX}px`
+    user.style.bottom = `${userPositionY}px`
+  }
   if (e.key === 'ArrowLeft') {
     moveUserLeft();
     user.style.left = `${userPositionX}px`
@@ -481,4 +496,6 @@ function moveUser(e) {
 }
 // console.log(userPositionX-50 , userPositionX+50,userPositionX);
 document.addEventListener("keydown", moveUser);
+document.querySelector(".fa-arrow-left").addEventListener("mousedown",moveUser)
+document.querySelector(".fa-arrow-right").addEventListener("mousedown",moveUser)
 let ballMoving = setInterval(moveBall, 15);
