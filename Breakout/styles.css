@@ -122,8 +122,9 @@ p {
   border: solid 5px var(--clr-gold);
   height: 500px;
   width: 998px;
+  margin: auto;
   margin-left: 270px;
-  overflow: hidden;
+  overflow: auto;
   background-color: black;
   position: absolute;
 }
@@ -255,4 +256,8 @@ h1{
 .highscore-btn:hover:after {
   -webkit-transform: translateX(-9%) translateY(-25%) rotate(45deg);
   transform: translateX(-9%) translateY(-25%) rotate(45deg);
+}
+.fa-arrow-left:hover,.fa-arrow-right:hover{
+  transform: translateX(-9%) translateY(-25%);
+  
 }
